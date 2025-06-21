@@ -4,6 +4,10 @@
 use core::panic::PanicInfo;
 use core::ptr;
 
+mod systick;
+
+#[no_mangle]
+
 pub unsafe extern "C" fn Reset() -> ! {
     extern "C" {
         static mut _sbss: u8;
@@ -22,6 +26,12 @@ pub unsafe extern "C" fn Reset() -> ! {
         &mut _sdata as *mut u8,
         count
     );
+
+    hprintln("Hello World").unwrap();
+
+    systick::init();
+
+    loop {}
 }
 
 
