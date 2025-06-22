@@ -96,3 +96,28 @@ pub static RESET_VECTOR: unsafe extern "C" fn() -> ! = Reset;
 pub extern "C" fn SysTick() {
     println("Systick").unwrap();
 }
+
+#[no_mangle]
+#[naked]
+pub unsafe extern "C" fn SVCall() {
+    asm!(
+        "cmp lr, #0xfffffff9",
+        "bne 1f",
+
+        "mov r0, #1",
+        "msr CONTROL, r0",
+        "isb",
+        "movw lr, #0xfffd",
+        "movt lr, #0xffff",
+        "bx lr",
+
+        "1:",
+        "mov r0, #0",
+        "msr CONTROL, r0",
+        "isb",
+        "movw lr, #0xfff9",
+        "movt lr, #0xffff",
+        "bx lr",
+        options(noreturn),
+    );
+}
