@@ -1,10 +1,16 @@
 #![no_main]
 #![no_std]
 
+use core::fmt::Alignment;
 use core::panic::PanicInfo;
 use core::ptr;
+use core::mem::MaybeUninit;
 
 mod systick;
+
+
+#[repr(align(8))]
+struct AlignedStack(MaybeUninit<[u8; 1024]>);
 
 #[no_mangle]
 
@@ -87,6 +93,8 @@ pub extern "C" fn DefaultExceptionHandler() {
     loop []
 }
 
+
+
 // The reset vector, a pointer into the reset handler
 #[link_section = ".vector_table.reset_vector"]
 #[no_mangle]
@@ -120,4 +128,7 @@ pub unsafe extern "C" fn SVCall() {
         "bx lr",
         options(noreturn),
     );
+
+    #[link_section = ".app_stack"]
+    static mut APP_STACK: AligedStack = AlignedStack(MaybeUninit::uninit());
 }
