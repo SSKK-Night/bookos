@@ -40,6 +40,12 @@ pub unsafe extern "C" fn Reset() -> ! {
     loop {}
 }
 
+extern "C" fn app_main() -> ! {
+    hprintln!("App").unwrap();
+    unsafe { asm!("svc 0"); }
+    loop {}
+}
+
 
 #[panic_handler]
 
