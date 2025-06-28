@@ -35,6 +35,16 @@ pub unsafe extern "C" fn Reset() -> ! {
 
     hprintln("Hello World").unwrap();
 
+
+    context_frame.r0 = 0;
+    context_frame.r1 = 0;
+    context_frame.r2 = 0;
+    context_frame.r3 = 0;
+    context_frame.r12 = 0;
+    context_frame.lr = 0;
+    context_frame.return_addr = app_main as u32;
+    context_frame.xpsr = 0x0100_0000;
+
     systick::init();
 
     loop {}
