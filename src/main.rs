@@ -12,6 +12,10 @@ mod systick;
 #[repr(align(8))]
 struct AlignedStack(MaybeUninit<[u8; 1024]>);
 
+extern "C" {
+    fn asm_execute_process(sp: usize);
+}
+
 #[no_mangle]
 
 pub unsafe extern "C" fn Reset() -> ! {
