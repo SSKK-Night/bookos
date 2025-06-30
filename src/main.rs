@@ -49,6 +49,8 @@ pub unsafe extern "C" fn Reset() -> ! {
     context_frame.return_addr = app_main as u32;
     context_frame.xpsr = 0x0100_0000;
 
+    adm_execute_process(ptr);
+
     systick::init();
 
     loop {}
