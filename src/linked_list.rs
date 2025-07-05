@@ -1,4 +1,20 @@
 #[cfg(test)]
+
+use core::ptr::NonNull;
+use core::marker::PhantomData;
+
+pub struct ListItem<'a, T> {
+    value: T,
+    next: Option<NonNull<ListItem<'a, T>>>
+    marker: PhantomData<&'a T>,
+}
+
+pub struct LinkedList<'a, T> {
+    head: Option<NonNull<ListItem<'a, T>>>,
+    last: Option<NonNull<ListItem<'a, T>>>,
+    marker: PhantomData<&'a T>,
+}
+
 mod test {
     use ListItem;
     use LinkedList;
