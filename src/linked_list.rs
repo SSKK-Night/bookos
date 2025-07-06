@@ -15,6 +15,66 @@ pub struct LinkedList<'a, T> {
     marker: PhantomData<&'a T>,
 }
 
+impl<'a, T> ListItem<'a, T> {
+    pub fn new(value: T) -> Self {
+        ListItem {
+            value,
+            next: None,
+            marker: PhantomData,
+        }
+    }
+}
+
+impl<'a, T> LinkedList<'a, T> {
+    pub fn new() -> Self {
+        LinkedList {
+            head: None,
+            last: None,
+            marker: PhantomData,
+        }
+    }
+
+    pub fn push(&mut self, item: &'a mut ListItem<'a, T>) {
+        let ptr = unsafe {
+            NonNull::new_unchecked(item as *mut ListItem<T>)
+        };
+        let prev_last = self.last.replace(ptr);
+
+        if prev_last.is_none() {
+            self.head = Some(ptr);
+        } else {
+            prev_last.map(|mut i| unsafe {
+                i.as_mut().next = Some(ptr);
+            });
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.head.is_none()
+    }
+
+    pub fn head_mut(&mut self)-> Option<&mut T> {
+        self.head.map(|ptr| unsafe {
+            &mut *ptr.as_ptr()
+        }.deref_mut())
+    }
+
+    pub fn pop(&mut self) -> Option<&'a mut ListItem<'a, T>> {
+        let result = self.head.take();
+        let next = result.and_then(|mut ptr| unsafe {
+            ptr.as_mut().next
+        });
+
+        if next.is_none() {
+            self.last = None;
+        }
+
+        self.head = next;
+
+        result.map(|ptr| unsafe { &mut *ptr.as_ptr() })
+    }
+}
+
 mod test {
     use ListItem;
     use LinkedList;
