@@ -22,6 +22,10 @@ pub struct Process<'a> {
 #[repr(align(8))]
 pub struct AlignedStack(pub MaybeUninit<[u8; 1024]>);
 
+extern "C" {
+    fn asm_excute_process(sp: usize, regs: &mut [u32; 8]) -> usize;
+}
+
 impl<'a> Process<'a> {
     pub fn new(stack: &'a mut AlignedStack, app_main: extern "C" fn() -> !) ->
 Self {
@@ -44,5 +48,9 @@ Self {
             regs: [0; 8],
             marker: PhantomData,
         }
+    }
+
+    pub fn exec(&mut self) {
+        self.sp = unsafe { asm_excute_process(self.sp, &mut self.regs) }
     }
 }
