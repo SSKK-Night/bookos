@@ -5,8 +5,18 @@ use core::fmt::Alignment;
 use core::panic::PanicInfo;
 use core::ptr;
 use core::mem::MaybeUninit;
+use process::{AligedStack, Process};
 
 mod systick;
+
+
+#[link_section = ".app_stack"]
+static mut APP_STACK: AlignedStack = AligedStack(MaybeUninit::uninit())
+
+let mut process = Process::new(&mut APP_STACK, app_main);
+process.exec();
+
+hprintln("Kernel").unwrap();
 
 
 #[repr(align(8))]
