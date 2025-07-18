@@ -72,6 +72,19 @@ extern "C" fn app_main() -> ! {
     loop {}
 }
 
+extern "C" fn app_main2() -> ! {
+    loop {
+        hprintln!("App2").unwrap();
+        unsafe { asm!("svc 0"); }
+    }
+}
+
+extern "C" fn app_main3() -> ! {
+    loop {
+        hprintln!("App: {}", i).unwrap();
+        unsafe { asm("svc 0"); }
+    }
+}
 
 #[panic_handler]
 
