@@ -55,3 +55,5 @@ impl<T> Mutex<T> {
         self.locked.store(false, Ordering::Release);
     }
 }
+
+unsafe impl<T> Sync for Mutex<T> {}
