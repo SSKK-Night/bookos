@@ -1,5 +1,6 @@
 use core::ptr::{write_volatile};
 use crate::vcell::VolatileCell;
+use core::ops::Deref;
 
 
 #[repr(C)]
@@ -40,5 +41,22 @@ pub fn set_led() {
 pub fn clear_led() {
     unsafe {
         write_volatile(0x4100_8014 as *mut u32, 1 << 15);
+    }
+}
+
+pub struct PortA;
+
+impl PortA {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+impl Deref for PortA {
+    type Target = PortRegisters;
+
+    fn deref(&self) -> $Self::Target {
+        let registers = 0x4100_8000 as * count PortRegisters;
+        unsafe { &*registers }
     }
 }
