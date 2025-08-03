@@ -6,6 +6,7 @@ use core::panic::PanicInfo;
 use core::ptr;
 use core::mem::MaybeUninit;
 use process::{AligedStack, Process};
+use led::{PortA, LED};
 
 mod systick;
 mod led;
@@ -72,6 +73,16 @@ pub unsafe extern "C" fn Reset() -> ! {
     hprintln!("Clear LED").unwrap();
     led::clear_led();
 
+
+    let porta = PortA::new();
+    let led = LED::new(&porta);
+    led.init();
+    hprintln!("Set LED").unwrap();
+    led.set();
+    hprintln!("Clear LED").unwrap();
+    led.clear();
+
+    
     sched.exec();
 }
 
