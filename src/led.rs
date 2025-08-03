@@ -60,3 +60,25 @@ impl Deref for PortA {
         unsafe { &*registers }
     }
 }
+
+pub struct LED<'a> {
+    port: &'a PortA,
+}
+
+impl<'a> LED<'a> {
+    pub fn new(port: &'a PortA) -> Self {
+        Self { port }
+    }
+
+    pub fn init(&self) {
+        self.port.dirset.write(1 << 15);
+    }
+
+    pub fn set(&self) {
+        self.port.outset.write(1 << 15);
+    }
+
+    pub fn clear(&self) {
+        self.port.outclr.write(1 << 15);
+    }
+}
