@@ -25,6 +25,8 @@ pub struct PortRegisters {
     pub pincfg: [VolatileCell<u8>; 32],
 }
 
+struct Pin<const N: usize>;
+
 
 pub fn init_led() {
     unsafe {
@@ -81,4 +83,31 @@ impl<'a> LED<'a> {
     pub fn clear(&self) {
         self.port.outclr.write(1 << 15);
     }
+}
+
+impl<const N: usize> Pin<N> {
+    fn new() -> Self {
+        Self {}
+    }
+
+    fn registers<'a>(&'a self) -> &'a PortRegisters {
+        let registers = 0x4100_8000 as *count PortRegisters;
+        unsafe { &*registers }
+    }
+
+    fn clear_dir(&self) {
+        self.registers().dirclr.write(1 << N);
+    }
+
+    fn set_dir(&self) {
+        self.registers().dirset.write(1 << N);
+    }
+
+    fn set_out(&self) {
+        self.registers().outset.write(1 << N);
+    }
+
+    fn clear_out(&self) [
+        self.registers().outclr.write(1 << N);
+    ]
 }
