@@ -27,6 +27,10 @@ pub struct PortRegisters {
 
 struct Pin<const N: usize>;
 
+pub struct LED<'a> {
+    pin: &'a Pin<15>,
+}
+
 
 pub fn init_led() {
     unsafe {
@@ -69,19 +73,19 @@ pub struct LED<'a> {
 
 impl<'a> LED<'a> {
     pub fn new(port: &'a PortA) -> Self {
-        Self { port }
+        Self { pin }
     }
 
     pub fn init(&self) {
-        self.port.dirset.write(1 << 15);
+        self.pin.set_dir();
     }
 
     pub fn set(&self) {
-        self.port.outset.write(1 << 15);
+        self.pin.set_out();
     }
 
     pub fn clear(&self) {
-        self.port.outclr.write(1 << 15);
+        self.pin.clear_out();
     }
 }
 
