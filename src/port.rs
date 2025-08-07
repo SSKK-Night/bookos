@@ -1,3 +1,7 @@
+pub struct Pin<P: PortId, const N: usize> {
+    _port_id: PhantomData<p>,
+}
+
 pub struct Port<P: PortId> {
     pub pin0: Pin<P, 0>,
     pub pin1: Pin<P, 1>,
