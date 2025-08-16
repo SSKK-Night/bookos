@@ -1,12 +1,17 @@
 #![no_main]
 #![no_std]
 
+extern crate alloc;
+
 use core::fmt::Alignment;
 use core::panic::PanicInfo;
 use core::ptr;
 use core::mem::MaybeUninit;
 use process::{AligedStack, Process};
 use led::{PortA, LED};
+use alloc::alloc::{GlobalAlloc, Layout};
+
+struct DummyAllocator;
 
 mod systick;
 mod led;
@@ -197,3 +202,16 @@ pub unsafe extern "C" fn SVCall() {
     #[link_section = ".app_stack"]
     static mut APP_STACK: AligedStack = AlignedStack(MaybeUninit::uninit());
 }
+
+unsafe impl GlobalAlloc for DummyAllocator {
+    unsafe fn alloc(&self, _layout: Layout) -> *mut u8 {
+        unimplemented!();
+    }
+
+    unsafe fn dealloc(&self, _ptr: &mut u8, _layout: Layout) {
+        unimplemented!();
+    }
+}
+
+[#global_allocator]
+static GLOBAL_ALLOCATOR: DummyAllocator = DummyAllocator;
