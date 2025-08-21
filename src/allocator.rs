@@ -29,3 +29,20 @@ impl SimpleAllocator {
         self.head.next = Some(&mut *new_area_ptr);
     }
 }
+
+impl listNode {
+    const fn new(size: unsize) -> Self {
+        Self {
+            size,
+            next: None,
+        }
+    }
+}
+
+impl SimpleAllocator {
+    const fn new() -> Self {
+        Self {
+            head: ListNode::new(0),
+        }
+    }
+}
