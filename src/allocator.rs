@@ -46,3 +46,9 @@ impl SimpleAllocator {
         }
     }
 }
+
+impl SimpleAllocator {
+    unsafe fn dealloc(&mut self, ptr: *mut u8, layout: Layout) {
+        self.add_new_node(ptr as usize, layout.size());
+    }
+}
