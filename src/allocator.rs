@@ -51,4 +51,32 @@ impl SimpleAllocator {
     unsafe fn dealloc(&mut self, ptr: *mut u8, layout: Layout) {
         self.add_new_node(ptr as usize, layout.size());
     }
+
+    unsafe fn alloc(&mut self, layout: Layout) -> *mut u8 {
+        let align = layout.align();
+        let size = layout.size();
+        let mut current = &mut self.head;
+        // 空きリストを先頭から見ていく
+        while let Some(ref mut node) = current.next {
+            let start_addr = node.start_addr();
+            let aligned_addr = align_addr(start_addr, align);
+            let end_addr = node.end_addr();
+            let node_size = end_addr - align_addr;
+            if node_size < size {
+                current = current.next.as_mut().unwrap();
+            } else {
+                // 十分な大きさのノードを見つけたのでリストからノードを削除する
+                let next = current.next.take();
+                let result = aligned_addr as *mut u8;
+                current.next = next.unwrap().next.take();
+                // 余っている領域があるならば空きリスト領域に追加しなおす
+                self.add_new_node(start_addr, align_addr - start_addr);
+                self.add_new_node(aligned_addr + size, end_addr - (aligned_addr + size));
+
+                return result;
+            }
+        }
+
+        return core::ptr::null_mut();
+    }
 }
