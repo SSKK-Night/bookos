@@ -214,7 +214,7 @@ unsafe impl GlobalAlloc for DummyAllocator {
 }
 
 [#global_allocator]
-static GLOBAL_ALLOCATOR: DummyAllocator = DummyAllocator;
+static GLOBAL_ALLOCATOR: mutex::Mutex<allocator::SimpleAllocator> = mutex::Mutex::new(allocator::SimpleAllocator::new());
 
 #![feature(alloc_error_handler)]
 
