@@ -61,6 +61,14 @@ SECTIONS
     }
 }
 
+.app_stack ALIGN(0x08):
+{
+    *(.app_stack .app_stack.*);
+} > RAM
+
+// .app_stackの末尾の領域を使う
+_heap_start = ADDR(.app_stack) + sizeof(.app_stack);
+
 PROVIDE(NMI = DefaultExceptionHandler);
 PROVIDE(HardFault = DefaultExceptionHandler);
 PROVIDE(MemManage = DefaultExceptionHandler);
