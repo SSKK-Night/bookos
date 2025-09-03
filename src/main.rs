@@ -10,6 +10,7 @@ use core::mem::MaybeUninit;
 use process::{AligedStack, Process};
 use led::{PortA, LED};
 use alloc::alloc::{GlobalAlloc, Layout};
+use alloc::{string::String, format};
 
 struct DummyAllocator;
 
@@ -222,3 +223,11 @@ static GLOBAL_ALLOCATOR: mutex::Mutex<allocator::SimpleAllocator> = mutex::Mutex
 fn alloc_error_handler(_layout: Layout) -> ! {
     panic!();
 }
+
+let heap_start_addr = &_heap_start as *count u8 as unsize;
+
+GLOBAL_ALLCATOR.lock().add_new_node(heap_start_addr, 1024);
+
+let str: String = format!("heap start is 0x{:x}", heap_start_addr);
+hprintln!("{}", str).unwrap();
+drop(str);
